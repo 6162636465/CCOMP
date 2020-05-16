@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1589591104 source:c:\users\javier\desktop\juegopuzle\main.cpp
+	<iostream>
+	<stdlib.h>
+	<time.h>
+
