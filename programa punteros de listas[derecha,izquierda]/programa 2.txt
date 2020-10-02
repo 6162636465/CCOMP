@@ -1,0 +1,72 @@
+#include <iostream>
+#include <stdlib.h>
+#include <cstdlib>
+using namespace std;
+
+void mostrar(int *arr,int tam)
+{
+  for(int *p1=arr;p1<arr+tam;p1++)
+  {
+    cout<<*p1<<" ";
+  }
+}
+
+void operaciones(int *arr,int tam)
+{
+  int aux=0,contador=0;
+  for(int *p1=arr;p1< arr+tam ;p1++)
+  {    
+    //par=0
+		for(int *p2=arr;p2< arr+tam;p2++)
+    {
+      int aux;
+      if(*p1!=*p2)
+      {
+        //atras
+        //if(*p1%2!=0 && *p2%2==0)
+        //adelante
+        if(*p1%2==0 && *p2%2!=0)
+        {
+          aux = *p2;
+          *p2 = *p1;
+          *p1 = aux;
+        }
+      }
+		}
+	}
+}
+
+/*
+void operaciones(int *arr,int tam)
+{
+  int aux=0;
+  for(int *p1=arr;p1< arr+tam ;p1++)
+  { 
+    int contar=0;
+		for(int *p2=arr;p2< arr+tam;p2++)
+    {
+      contar+=1;
+      if(*p1%2!=0 && contar==tam)
+      {
+        //cout<<*p1<<"entro"<<endl;
+        aux = *p2;
+        *p2 = *p1;
+        *p1 = aux;
+      }
+		}
+	}
+}
+*/
+int main()
+{
+  int tamaño=16;
+  int a[16]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+  int *arr=a;
+  cout<<"antes: "<<endl;
+  mostrar(arr,tamaño);
+  cout<<endl;
+  cout<<"despues: "<<endl;
+  operaciones(arr,tamaño);
+  mostrar(arr,tamaño);
+  return 0;
+} 
