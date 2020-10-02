@@ -1,0 +1,84 @@
+#include <iostream>
+#include <stdlib.h>
+#include <cstdlib>
+using namespace std;
+
+int x=0,*pocision,*temp;
+//funcion mostrar
+void mostrar(int *arr,int tam)
+{
+  for(int *p1=arr;p1<arr+tam;p1++)
+  { 
+    cout<<*p1<<" ";
+  }
+}
+void cambio(int* l, int* z)
+{
+    int aux;
+    aux = *l;
+    *l = *z;
+    *z = aux;
+}
+//funcion para ordenar
+void cocktail_sort(int *arr, int tam)
+{
+  int n=tam-1,derecha=1,x=0,y=0;//n esta definida por su exprecion matematica por la cantidad de bueltas es n-1
+  cout<<"ordenamiento :"<<endl;
+  /*
+  int *p1=arr;//p1 es el puntero q apunta al primer elemento ordenado
+  p1=p1+x;
+  int *p2=arr;//p2 apunta al ultimo elemento ordenado
+  p2=p2+tam-y;
+  */
+  bool sigue=true;
+  while (sigue) {
+        sigue = false;
+        int* ptr = arr;
+        for (; arr < ptr + tam - 1; arr++)
+        {
+            if (*arr > * (arr + 1))
+            {
+                cambio(arr, arr + 1);
+                sigue = true;
+            }
+        }
+        if (!sigue)
+            break;
+        sigue = false;
+        for (--arr; arr >= ptr; --arr)
+        {
+            if (*arr > * (arr + 1)) 
+            {
+                cambio(arr, arr + 1);
+                sigue = true;
+            }
+        }
+        ++ptr;
+    }
+}
+//se crea una lista aleatoria desordenada para enviar al ordenamiento
+void pedirLista(int & x,int*pocision)
+{
+  cout<< "coloque el tamaño de la lista :";
+  cin>>x;
+  pocision=new int[x];//creo una lista dinamica para poder alterar el tamaño de la lista
+  //lo ise como plus para esta tarea
+  for(int i=0;i<x;i++)
+  {
+    int p=rand()%100+1;//funcion random de los numeros
+    pocision[i]=p;
+  }
+
+  mostrar(pocision,x);
+  cout<<endl;
+
+  //envio a la funcion para ordenar
+  cocktail_sort(pocision,x);
+  mostrar(pocision,x);
+}
+
+int main() 
+{
+  pedirLista(x,pocision);
+  delete[] pocision;
+}
