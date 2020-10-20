@@ -1,0 +1,66 @@
+#include <iostream>
+using namespace std;
+void sswap ( char*x,char *y )
+      {
+          char tmp;
+          tmp = *x;
+          *x = *y;
+          *y = tmp;
+      }
+void Trim(char * cad)
+{
+
+  char *ptr;
+  ptr = cad;
+  char *next;
+  for (next = ptr; *next != '\0' ; next++)
+  {
+    char *go;
+    go=cad;
+    while (*go != ' ')
+    {
+      go++;
+    }
+    bool goku=true;
+    char *ricardomilos;
+    ricardomilos=go;
+    while(goku==true)
+    {
+      if(*ricardomilos==' ')
+      {
+        ricardomilos++;
+      }
+      else
+      {
+        sswap ( ricardomilos,go );
+        goku=false;
+      }
+    }
+  }
+  cout<<"cadena modificada : "<<cad<<endl;
+}
+void EsPalindrome(char* frase)
+{
+    Trim(frase);
+    char* comienzo = frase;
+    char* fin = frase;
+    while (*fin != '\0')
+        fin++;
+    fin--;
+    while (comienzo++ <= fin--)
+    {
+        if (*comienzo != *fin)
+        {
+            cout << "No es palindrome";
+            break;
+        }
+    }
+    if (*comienzo == *fin)
+        cout << "Es palindrome";
+}
+int main()
+{
+    char cad[100]={"somete mos"};
+    char *arr=cad;
+    EsPalindrome(cad);
+}

@@ -1,0 +1,55 @@
+#include <iostream>
+using namespace std;
+
+void sswap ( char*x,char *y )
+      {
+          char tmp;
+          tmp = *x;
+          *x = *y;
+          *y = tmp;
+      }
+void Trim(char * cad)
+{
+
+  char *ptr;
+  ptr = cad;
+  char *next;
+  for (next = ptr; *next != '\0' ; next++)
+  {
+    char *go;
+    go=cad;
+    while (*go != ' ')
+    {
+      go++;
+    }
+    bool goku=true;
+    char *ricardomilos;
+    ricardomilos=go;
+    while(goku==true)
+    {
+      if(*ricardomilos==' ')
+      {
+        ricardomilos++;
+      }
+      else
+      {
+        sswap ( ricardomilos,go );
+        goku=false;
+      }
+    }
+  }
+  cout<<"cadena modificada : "<<cad<<endl;
+}
+//explicacion de logica:
+/*
+ise el ejercicio con 3 bucles el primer bucle recorre la lista,el segundo
+apunta a un espacion en blanco(" ")y el tercero apartir de la pocicion del espacio en blanco busca una letra para aser un swap esto evita los problemas
+de pones doble espacion en blanco("  ")
+*/
+int main()
+{
+  char cad[100]={"hola  mundo nuevo"};
+  char *arr=cad;
+  cout<<"antes : "<<cad<<endl;
+  Trim(cad);
+}
