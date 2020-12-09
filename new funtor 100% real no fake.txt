@@ -1,0 +1,152 @@
+#include <iostream>
+
+using namespace std;
+template <class T>
+struct asc {
+    bool operator()(int a, int b) { return a < b; }
+};
+template <class T>
+
+struct desc {
+    bool operator()(int a, int b) { return a > b; }
+};
+
+template <class T,class C>
+class nodo
+{
+  public:
+  T valor;
+  nodo* next;
+  nodo(T v, nodo* n=nullptr)
+  { 
+    valor = v;
+    next = n;
+  }
+};
+
+template <class T,class C>
+class LE
+{
+  nodo<T,C>
+  * head=nullptr;
+  C orden;
+
+  public:
+  void print();
+  bool find(T v,nodo<T,C> *&pos);
+  void add(T v);
+  void del(T v);
+  ~LE();
+};
+
+template <class T,class C>
+void LE<T, C>::print()
+{
+  cout<<"Head->";
+  for(nodo <T, C>* p=head;p;p = p->next)
+      cout<<p->valor<<"->";
+  cout<<"NULL"<<endl;   
+}
+
+template <class T,class C>
+bool LE<T, C>::find(T v, nodo<T, C> *&pos)
+{
+  bool encontrado =false;
+  pos = nullptr;
+
+  for(nodo<T, C>* p =head;p && orden(p->valor, v) ;p=p->next)
+  {
+    if(p->valor == v)
+      {
+        encontrado = true;
+        break;
+      }
+    pos = p;
+  }
+  return encontrado;
+}
+
+template <class T,class C>
+void LE<T, C>::add(T v)
+{
+  nodo<T, C>* pos_ant;
+  if(!find(v,pos_ant))
+  {
+     if(pos_ant)
+       pos_ant->next = new nodo(v,pos_ant->next);
+     else
+      head = new nodo(v,head);
+  }
+}
+
+template <class T,class C>
+void LE<T, C>::del(T v)
+{
+  nodo<T, C> *pos_ant,*pos_del;
+  if(find(v,pos_ant))
+  {
+    if(pos_ant)
+    {
+      pos_del = pos_ant->next;
+      pos_ant->next = pos_del->next; //pos_ant->next = pos_ant->next->next;
+      delete pos_del;
+    }
+    else
+    {
+      pos_del = head;
+      head = pos_del->next; //head = head->next;
+      delete pos_del;
+    }
+  }
+}
+
+template <class T,class C>
+LE<T, C>::~LE()
+{
+ while(head)
+   del(head->valor);
+}
+
+int main() {
+  int x;
+  cout<<"usuario ponga 1 si desea imprimir acendentemente u 0 si quiere decendentemente "<<endl;
+  cin>>x;
+  if(x==1)
+  {
+    cout<<"lista : acendente"<<endl;
+    LE<int,asc<int> >lista;
+    lista.add(1);
+    lista.add(2);
+    lista.add(3);
+    lista.add(4);
+    lista.add(5);
+    lista.add(6);
+    lista.add(7);
+    lista.add(8);
+    lista.add(10);
+    lista.add(12);
+    lista.add(14);
+    lista.print();
+  }
+  else if(x==0)
+  {
+    cout<<"lista : decendente"<<endl;
+    LE<int,desc<int> >lista;
+    lista.add(1);
+    lista.add(2);
+    lista.add(3);
+    lista.add(4);
+    lista.add(5);
+    lista.add(6);
+    lista.add(7);
+    lista.add(8);
+    lista.add(10);
+    lista.add(12);
+    lista.add(14);
+    lista.print();
+  }
+  else
+  {
+    cout<<"error al ingresar el valor"<<endl;
+  }
+}
