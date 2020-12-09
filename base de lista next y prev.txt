@@ -1,0 +1,57 @@
+#include <iostream>
+
+using namespace std;
+
+struct asc
+{
+  bool operator()(int a, int b)
+  {return a<b;}
+};
+
+struct desc
+{
+  bool operator()(int a, int b)
+  {return a>b;}
+};
+
+struct nodo
+{
+  int valor;
+  nodo * next;
+  nodo * prev;
+  nodo(int v, nodo* n=nullptr, nodo * p=nullptr)
+  { valor = v; next=n; prev = p;}
+};
+
+void crear(int *p, nodo*& lista)
+{
+  lista = new nodo(*p);
+  p++;
+   for(nodo* n =lista;*p>0;p++,n=n->next)
+     n->next = new nodo(*p,nullptr,n);
+     
+}
+
+void print(nodo *lista)
+{
+  nodo *r;
+  cout<<"lista -> ";
+  for(;lista;r=lista,lista=lista->next)
+     cout<<lista->valor<<" -> ";
+  cout<<"NULL"<<endl;
+  cout<<"NULL -> ";
+  for(;r;r=r->prev)
+    cout<<r->valor<<" -> ";
+  cout<<"lista"<<endl;  
+
+}
+
+int main() {
+  int A[] = {7,7,27,7,12,9,18,9,8,7,-1};
+  nodo *miLista;
+
+  crear(A,miLista);
+  print(miLista);
+
+
+}
