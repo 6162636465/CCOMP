@@ -1,0 +1,162 @@
+#include <iostream>
+
+using namespace std;
+
+template<typename T>
+class nodo
+{
+public:
+	T valor;
+	nodo<T>* next;
+	nodo<T>* prev;
+
+	nodo<T>(T _v, nodo<T>* _next = nullptr, nodo<T>* _prev = nullptr) {
+		valor = _v;
+		next = _next;
+		prev = _prev;
+	}
+};
+
+
+template<typename T>
+class LE{
+public:
+	nodo<T>* head;
+	LE() {head = nullptr;}
+
+	bool find(T Dato, nodo<T>*& Pos) {
+		Pos = head;
+		nodo<T>* ptr;
+		for (ptr = head; ptr && Dato > ptr->valor; ptr = ptr->next)
+			Pos = ptr;
+
+		if (ptr && ptr->valor == Dato)		
+			return true;
+
+		else 
+      return Pos && Pos->valor == Dato;
+		
+	}
+
+	void insert(T dato) {
+		nodo<T>* ptr;
+
+		if(!find(dato,ptr))
+		{
+			//no hay nada en la lista
+			if (!head)
+				head = new nodo<T>(dato);
+			
+			//adelante de un elemento existente
+			else if (!ptr->next && dato > head->valor)
+				ptr->next = new nodo<T>(dato, ptr->next, ptr);
+			
+			//nuevo head
+			else if (dato < head->valor){
+				head = new nodo<T>(dato, head, head->prev);
+				ptr->prev = head;
+			}
+
+			//medio
+			else{
+				ptr->next = new nodo<T>(dato, ptr->next, ptr);
+				ptr->next->next->prev = ptr->next;
+
+			}
+		}
+	}
+
+	void print() {
+		if (!head)
+			cout << "NULL" << endl;
+
+		else{
+			cout << "NULL->";
+			nodo<T>* ultimo=nullptr;
+			for (nodo<T>* tmp = head; tmp; tmp = tmp->next){
+				cout << tmp->valor << "->";
+				if (tmp) 
+					ultimo = tmp;
+			}
+			cout << "NULL" << endl;
+			cout << "NULL<-";
+			for (; ultimo; ultimo = ultimo->prev) 
+				cout << ultimo->valor << "<-";
+			cout << "NULL" << endl;
+		}
+
+	}
+
+	void remove(T dato) {
+		nodo<T>* ptr;
+		if (find(dato, ptr)){
+			//solo 1 elemento
+			if (!(head->next) && dato == head->valor)
+				head = NULL;
+			//mas de uno, elimino head
+			else if (head->next && dato == head->valor){
+				head = head->next;
+				delete ptr;
+			}
+			//el elemento esta en el final
+			else if (!ptr->next->next) {
+				nodo<T>* temp = ptr->next;
+				ptr->next = temp->next;
+				delete temp;
+			}
+			//el elemento esta en el medio
+			else{
+				nodo<T>* temp = ptr->next;
+				ptr->next = temp->next;
+				temp->next->prev = ptr;
+				delete temp;
+			}
+		}
+		else
+			cout << "No se encontro el elemento en la lista" << endl;
+	}
+
+	void deleteall(){
+		while (head) {
+			T valor = head->valor;
+			remove(valor);
+		}
+	}
+};
+
+int main() {
+  LE<int> l;
+  int opcion;
+    int dato, datoaeliminar;
+    do{
+        cout<<"\t         MENU"<<endl;
+        cout<<"1. Insertar elemento en la lista"<<endl;
+        cout<<"2. Eliminar un elemento de la lista"<<endl;
+        cout<<"3. Mostrar elementos en la lista"<<endl;
+        cout<<"4. Borrar toda la lista"<<endl;
+        cout<<"5. Salir"<<endl;
+        cout<<"Opcion: ";
+        cin>>opcion;
+
+        switch(opcion){
+        case 1: cout<<"\nDigite un numero: ";
+                cin>>dato;
+                l.insert(dato);
+                system("pause");
+                break;
+        case 2: cout<<"\nEscriba el dato a eliminar: ";
+                cin>>datoaeliminar;
+                l.remove(datoaeliminar);
+                system("pause");
+                break;
+        case 3: l.print();
+                system("pause");
+                break;
+        case 4: l.deleteall();
+                system("pause");
+                break;
+        }
+        system("cls");
+
+    }while(opcion!=5);
+}

@@ -1,0 +1,133 @@
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+
+template <class T>
+struct Cgreater {
+    inline bool operator()(T a, T b) {
+        return a > b;
+    }
+};
+template <class T>
+struct Cless {
+    inline bool operator()(T a, T b) {
+        return a < b;
+    }
+};
+template <class T>
+struct node {
+    T val;
+    node* next;
+    node(T x, node* p = nullptr) {
+        val = x;
+        next = p;
+    }
+};
+template<class T, class U>
+struct lista {
+    U op;
+    node<T>* head;
+    lista() {
+        head = nullptr;
+    }
+    bool find(int val, node<T>*& ptr, node<T>*& tmp) {
+        tmp = head->next;
+        ptr = head;
+        while (tmp) {
+            if (op(tmp->val, val) || tmp->val == val) {
+                break;
+            }
+            tmp = tmp->next;
+            ptr = ptr->next;
+        }
+        if (tmp == 0) {
+            return 0;
+        }
+        return ((!(op(ptr->val, val) || op(tmp->val, val))));
+    }
+    void insert(int val) {
+        node<T>* tmp, * ptr;
+        if (head == nullptr) {
+            head = new node<T>(val);
+            head->next = new node<T>(val);
+        }
+        else if (find(val, ptr, tmp) == 0) {
+            if (op(head->val, val)) {
+                head->val = val;
+            }
+            ptr->next = new node<T>(val);
+            ptr->next->next = tmp;
+
+        }
+    }
+    void remove(int val) {
+        node<T>* tmp, * ptr;
+        find(val, ptr, tmp);
+        if (find(val, ptr, tmp) == 1) {
+            ptr->next = tmp->next;
+            delete tmp;
+            if (head->next == nullptr) {
+                delete head;
+                head = nullptr;
+            }
+        }
+        else
+            cout << "no hay un nodo con ese valor" << endl;
+    }
+    void deleteall() {
+        node<T>* tmp;
+        for (tmp = head; head; tmp = head) {
+            head = head->next;
+            delete tmp;
+
+        }
+    }
+    void print() {
+        if (head == nullptr) {
+            cout << "la lista esta vacia" << endl;
+        }
+        else {
+            for (node<T>* i = head->next; i != nullptr; i = i->next) {
+                cout << i->val << "->";
+            }
+            cout <<"NULL"<< endl;
+        }
+    }  
+};
+
+int main() {
+  lista<int, Cless <int> > l;
+  int opcion;
+    int dato, datoaeliminar;
+    do{
+        cout<<"\t         MENU"<<endl;
+        cout<<"1. Insertar elemento en la lista"<<endl;
+        cout<<"2. Eliminar un elemento de la lista"<<endl;
+        cout<<"3. Mostrar elementos en la lista"<<endl;
+        cout<<"4. Borrar toda la lista"<<endl;
+        cout<<"5. Salir"<<endl;
+        cout<<"Opcion: ";
+        cin>>opcion;
+
+        switch(opcion){
+        case 1: cout<<"\nDigite un numero: ";
+                cin>>dato;
+                l.insert(dato);
+                system("pause");
+                break;
+        case 2: cout<<"\nEscriba el dato a eliminar: ";
+                cin>>datoaeliminar;
+                l.remove(datoaeliminar);
+                system("pause");
+                break;
+        case 3: l.print();
+                system("pause");
+                break;
+        case 4: l.deleteall();
+                system("pause");
+                break;
+        }
+        system("cls");
+
+    }while(opcion!=5);
+}

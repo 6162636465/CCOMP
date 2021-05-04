@@ -1,0 +1,116 @@
+// C++ program for Merge Sort
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+class Ascendente {
+public:
+    Ascendente()= default;
+    bool operator()(int A, int B) const {
+        return A <= B;
+    }
+};
+
+class Descendente {
+public:
+    Descendente()=default;
+    bool operator()(int A, int B) const {
+        return A >= B;
+    }
+};
+
+template<class T>
+void merge(int arr[], int l, int m, int r, T (orden)) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    int L[n1], R[n2];
+
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+
+    int i = 0;
+
+    int j = 0;
+
+    int k = l;
+
+    while (i < n1 && j < n2) {
+        if (orden(L[i], R[j])) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+template<class T>
+void mergeSort(int arr[], int l, int r, T orden) {
+    if (l >= r) {
+        return;
+    }
+    int m = l + ((r - l) / 2);
+    mergeSort(arr, l, m, orden);
+    mergeSort(arr, m + 1, r, orden);
+    merge(arr, l, m, r, orden);
+}
+
+void printArray(int A[], int size) {
+    for (int i = 0; i < size; i++)
+        cout << A[i] << " ";
+}
+
+
+// Driver code
+int main() {
+    // Functores
+    struct timeval begin{}, end{};
+    mingw_gettimeofday(&begin, nullptr);
+    /*
+     * 1000
+     * 10000
+     * 300000
+     * 500000
+     */
+    int SIZE = 500000;
+    int *arr;
+
+    arr = new int[SIZE];
+    int num, c;
+
+    srand(time(nullptr));
+    for (c = 0; c < SIZE; c++) {
+        num = 1 + rand() % SIZE;
+        arr[c] = num;
+    }
+    mergeSort(arr, 0, SIZE - 1, Ascendente());
+    mingw_gettimeofday(&end, nullptr);
+
+    long seconds = end.tv_sec - begin.tv_sec;
+    long microseconds = end.tv_usec - begin.tv_usec;
+    double elapsed = seconds + microseconds * 1e-6;
+
+    printf("Time measured: %.12f seconds.\n", elapsed);
+    delete[]arr;
+}
+
+// This code is contributed by Mayank Tyagi
+

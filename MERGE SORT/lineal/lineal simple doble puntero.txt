@@ -1,0 +1,123 @@
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
+
+template<class T>
+struct Cless{
+  inline bool operator()(T a, T b){
+    return a < b;
+  }
+};
+
+template<class T>
+struct Cgreater{
+  inline bool operator()(T a, T b){
+    return a > b;
+  }
+};
+
+template<class T>
+struct nodo{
+  nodo(T _v){v=_v;next=0;}
+  T v;
+  nodo<T> *next;
+};
+
+template<class T, class C>
+class lista{
+public:
+  lista(){head=0;}
+
+  ~lista(){
+  nodo<T>*a=head, *b;
+  while(a){
+    b=a->next;
+    delete a;
+    a=b;
+  }
+}
+  bool find(T x, nodo<T>**&p){
+  for(p=&head; *p && m_cmp( (*p)->v, x); p=&((*p)->next));
+  return *p && (*p)->v == x;
+}
+
+  bool insert(T x){
+  nodo<T>**p;
+  if(find (x,p) )
+    return 0;
+  nodo<T>*n =new nodo<T>(x);
+  n->next = *p;
+  *p=n;
+  return 1;
+}
+  bool remove(T x){
+  nodo<T>**p;
+  if( !find(x,p) )
+    return 0;
+  nodo<T>*t=*p;
+  *p= (*p)->next;
+  delete t;
+  return 1;
+}
+
+  void print() {
+    if (head == nullptr) 
+    cout << "Lista vacia" << endl;
+    
+    else {
+      for(nodo<T>*a = head; a ;a= a->next )
+        cout<<a->v<<"-> ";
+    cout<<"NULL"<<endl;
+    }
+  }  
+  
+  void deleteall() {
+    nodo<T>* temp, ** i = &head;
+    while (*i) {
+      temp = *i;
+      *i = (*i)->next;
+      delete temp;
+    }
+  }
+
+private:
+  nodo<T>* head;
+  C m_cmp;
+};
+
+int main() {
+  lista<int, Cless <int> > l;
+  int opcion;
+    int dato, datoaeliminar;
+    do{
+        cout<<"\t         MENU"<<endl;
+        cout<<"1. Insertar elemento en la lista"<<endl;
+        cout<<"2. Eliminar un elemento de la lista"<<endl;
+        cout<<"3. Mostrar elementos en la lista"<<endl;
+        cout<<"4. Borrar toda la lista"<<endl;
+        cout<<"5. Salir"<<endl;
+        cout<<"Opcion: ";
+        cin>>opcion;
+
+        switch(opcion){
+        case 1: cout<<"\nDigite un numero: ";
+                cin>>dato;
+                l.insert(dato);
+                system("pause");
+                break;
+        case 2: cout<<"\nEscriba el dato a eliminar: ";
+                cin>>datoaeliminar;
+                l.remove(datoaeliminar);
+                system("pause");
+                break;
+        case 3: l.print();
+                system("pause");
+                break;
+        case 4: l.deleteall();
+                system("pause");
+                break;
+        }
+        system("cls");
+
+    }while(opcion!=5);
+}

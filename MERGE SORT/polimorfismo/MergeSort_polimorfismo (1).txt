@@ -1,0 +1,187 @@
+#include <iostream>
+#include <ctime> 
+
+using namespace std;
+struct  Comparador
+{
+    virtual bool comp(int& a, int& b) = 0;
+};
+
+struct CLess :public Comparador
+{
+    bool comp(int& a, int& b) override
+    {
+        return a < b;
+    }
+};
+
+struct CGreater :public Comparador
+{
+    bool comp(int& a, int& b) override
+    {
+        return a > b;
+    }
+};
+
+
+void print(int* arr, int tam)
+{
+    cout << "{  ";
+    for (int* i = arr; i < arr + tam; i++)
+    {
+        cout << *i << "   ";
+    }
+    cout << "} \n\n";
+}
+
+int tamanioArr(int* ini, int* fin)
+{
+    int tam = 0;
+    int* ini_copy = ini;
+    while (ini_copy <= fin)
+    {
+        tam++;
+        ini_copy++;
+    }
+    return tam;
+}
+
+template <class T>
+void mezclar(int* ini, int* med, int* fin, int tam, T *p)
+{
+    int* izq = ini, * der = med + 1;
+    int* liAux = new int[tam];
+    *liAux = -1;
+    int* ia = liAux;
+    while (izq <= med && der <= fin)
+    {
+        if ((p->comp)(*izq, *der))
+        {
+            *ia = *izq;
+            izq++; ia++;
+        }
+        else
+        {
+            *ia = *der;
+            der++; ia++;
+        }
+    }
+    for (; izq <= med; izq++, ia++)
+    {
+        *ia = *izq;
+    }
+    for (; der <= fin; der++, ia++)
+    {
+        *ia = *der;
+    }
+    for (int* k = ini, *liA = liAux; k < ia && liA < liAux + tam; k++, liA++)
+    {
+        *k = *liA;
+    }
+    delete[]liAux;
+}
+
+template <class T>
+void mergeSort(int* arr, int* ini, int* fin, T *p)
+{
+    int tam = tamanioArr(ini, fin);
+    //print(ini, tam);
+    if (ini < fin)
+    {
+        int* med = ini + (tam / 2) - 1;
+        mergeSort(*&arr, ini, med, p);
+        mergeSort(*&arr, med + 1, fin, p);
+        mezclar(&*ini, med, fin, tam, p);
+        //print(ini, tam);
+    }
+}
+
+void llenarArrayAlRevez(int* arr, int tam)
+{
+    for (int* i = arr, valor = tam; i < arr + tam && valor > 0; i++, valor--)
+    {
+        *i = valor;
+    }
+}
+
+int main()
+{
+    unsigned t0, t1;
+
+    CLess cl;
+    CGreater cg;
+    Comparador* c;
+
+    c = &cl;
+    //c = &cg;
+
+    //#####################10 mil#####################
+    int tam = 100000;
+    int* arr1 = new int[tam];
+    llenarArrayAlRevez(arr1, tam);
+    //print(arr1, tam);
+
+    t0 = clock();
+    mergeSort<Comparador>(arr1, arr1, arr1 + tam - 1, *&c);
+    t1 = clock();
+
+    //print(arr1, tam);
+
+    double time = (double(t1 - t0) / CLOCKS_PER_SEC);
+    cout << "Execution Time: " << time << endl;
+
+    delete[]arr1;
+
+    //#####################millon#####################
+    tam = 1000000;
+    int* arr2 = new int[tam];
+    llenarArrayAlRevez(arr2, tam);
+    //print(arr2, tam);
+
+    t0 = clock();
+    mergeSort<Comparador>(arr2, arr2, arr2 + tam - 1, *&c);
+    t1 = clock();
+
+    //print(arr2, tam);
+
+    time = (double(t1 - t0) / CLOCKS_PER_SEC);
+    cout << "Execution Time: " << time << endl;
+
+    delete[]arr2;
+
+    //#####################10 millones#####################
+    tam = 10000000;
+    int* arr3 = new int[tam];
+    llenarArrayAlRevez(arr3, tam);
+    //print(arr3, tam);
+
+    t0 = clock();
+    mergeSort<Comparador>(arr3, arr3, arr3 + tam - 1, *&c);
+    t1 = clock();
+
+    //print(arr3, tam);
+
+    time = (double(t1 - t0) / CLOCKS_PER_SEC);
+    cout << "Execution Time: " << time << endl;
+
+    delete[]arr3;
+
+    //#####################100 millones#####################
+    tam = 100000000;
+    int* arr4 = new int[tam];
+    llenarArrayAlRevez(arr4, tam);
+    //print(arr4, tam);
+
+    t0 = clock();
+    mergeSort<Comparador>(arr4, arr4, arr4 + tam - 1, *&c);
+    t1 = clock();
+
+    //print(arr4, tam);
+
+    time = (double(t1 - t0) / CLOCKS_PER_SEC);
+    cout << "Execution Time: " << time << endl;
+
+    delete[]arr4;
+
+    return 0;
+}

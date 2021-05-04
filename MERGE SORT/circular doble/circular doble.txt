@@ -1,0 +1,158 @@
+#include <iostream>
+using namespace std;
+
+template<typename T>
+class nodo{
+public:
+	nodo<T>* next;
+	nodo<T>* prev;
+	T valor;
+
+	nodo(T dato, nodo<T>* _next, nodo<T>* _prev) {
+		valor = dato;
+		next = _next;
+		prev = _prev;
+	}
+};
+
+
+
+template<typename T>
+class LECD
+{
+public:
+	nodo<T>* head;
+	LECD() {head = NULL;}
+
+	bool find(T dato, nodo<T>**& ptr) {
+		for (ptr = &head; dato > (*ptr)->valor && (*ptr)->next != head; ptr = &((*ptr)->next));
+		return (*ptr)->valor == dato;
+	}
+
+	void insert(T dato) {
+		nodo<T>** ptr;
+		if (!head){
+			head = new nodo<T>(dato, NULL, NULL);
+			head->next = head;
+			head->prev = head;
+		}
+		else if (find(dato, ptr))
+			cout << "Elemento ya existente" << endl;
+	
+		else if (*ptr == head && dato < (*ptr)->valor){
+			nodo<T>* tempb = *ptr;
+			head = new nodo<T>(dato, tempb, NULL);
+			nodo<T>* tempa = tempb;
+
+			for (; tempa->next != tempb; tempa = tempa->next);
+			head->prev = tempa;
+			tempa->next = head;
+			tempb->prev = head;
+		}
+		else if ((*ptr)->valor > dato){
+			nodo<T>* tempa = *ptr;
+			(*ptr) = new nodo<T>(dato, *ptr, (*ptr)->prev);
+			tempa->prev = *ptr;
+		}
+		else{
+			(*ptr)->next = new nodo<T>(dato, head, *ptr);
+			head->prev = (*ptr)->next;
+		}
+	}
+
+	void print() {
+		if (!head)
+			cout << "Lista vacia" << endl;
+
+		else{
+			nodo<T>* ptr;
+			for (ptr = head; ptr->next != head; ptr = ptr->next)
+				cout << ptr->valor << "->";
+			
+			cout << ptr->valor << "->" << ptr->next->valor << endl;
+
+			for (ptr = head; ptr->prev != head; ptr = ptr->prev)
+				cout << ptr->valor << "<-";
+
+			cout << ptr->valor << "<-" << ptr->prev->valor << endl;
+		}
+	}
+
+	void remove(T dato) {
+		nodo<T>** ptr;
+		if (find(dato, ptr)){
+			if (*ptr == head && (*ptr)->next == head){
+				delete head;
+				head = NULL;
+			}
+
+			else if (*ptr == head && (*ptr)->next != head) {
+				nodo<T>* tempa = *ptr;
+				nodo<T>* tempb = *ptr;
+				head = head->next;
+				for (; tempb->next != tempa; tempb = tempb->next);
+
+				head->prev = tempa->prev;
+				tempb->next = head;
+				delete tempa;
+			}
+
+			else {
+				nodo<T>* temp = *ptr;
+				*ptr = (*ptr)->next;
+				(*ptr)->prev = temp->prev;
+				delete temp;
+
+			}
+		}
+		else
+			cout << "Elemento no encontrado" << endl;
+	}
+
+  
+	void deleteall() {
+		while (head) {
+			T valor = head->valor;
+			remove(valor);
+		}
+	}
+};
+
+
+
+int main() {
+  LECD<int> l;
+  int opcion;
+    int dato, datoaeliminar;
+    do{
+        cout<<"\t         MENU"<<endl;
+        cout<<"1. Insertar elemento en la lista"<<endl;
+        cout<<"2. Eliminar un elemento de la lista"<<endl;
+        cout<<"3. Mostrar elementos en la lista"<<endl;
+        cout<<"4. Borrar toda la lista"<<endl;
+        cout<<"5. Salir"<<endl;
+        cout<<"Opcion: ";
+        cin>>opcion;
+
+        switch(opcion){
+        case 1: cout<<"\nDigite un numero: ";
+                cin>>dato;
+                l.insert(dato);
+                system("pause");
+                break;
+        case 2: cout<<"\nEscriba el dato a eliminar: ";
+                cin>>datoaeliminar;
+                l.remove(datoaeliminar);
+                system("pause");
+                break;
+        case 3: l.print();
+                system("pause");
+                break;
+        case 4: l.deleteall();
+                system("pause");
+                break;
+        }
+        system("cls");
+
+    }while(opcion!=5);
+}
