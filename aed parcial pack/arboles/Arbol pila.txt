@@ -1,0 +1,269 @@
+#include <iostream>
+#include<stack>
+#include<vector>
+#include<queue>
+using namespace std;
+
+template<typename T>
+class Nodo
+{
+public:
+    Nodo<T>* hijos[2];
+    T x;
+    Nodo(T valor) {
+        hijos[0] = nullptr;
+        hijos[1] = nullptr;
+        x = valor;
+    }
+};
+
+
+template<typename T>
+class Arbol
+{
+public:
+    Nodo<T>* root;
+
+    Arbol() {
+        root = NULL;
+    }
+
+    ~Arbol() {
+        Nodo<T>* temp;
+        for (temp = root; temp != nullptr; temp = root) {
+            remove(temp->x);
+        }
+    }
+
+    bool Find(T dato, Nodo<T>**& Pos) {
+        for (Pos = &root; *Pos && (*Pos)->x != dato; Pos = &(*Pos)->hijos[dato > (*Pos)->x]);
+        return *Pos;
+    }
+
+
+    void insert(T dato) {
+        Nodo<T>** Pos;
+        if (Find(dato, Pos))
+            cout << "No se acepta repeticiones" << endl;
+        else
+            (*Pos) = new Nodo<T>(dato);
+    }
+
+
+    void inorden() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Inorden: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+            if (!temp)
+                Pila.pop();
+
+            else {
+                if (Pila.top().second == 0) {
+                    Pila.top().second++;
+                    Pila.push({ temp->hijos[0],0 });
+                }
+
+                else {
+                    Pila.pop();
+                    cout << temp->x << " ";
+                    Pila.push({ temp->hijos[1],0 });
+                }
+            }
+        }
+        cout << endl;
+    }
+
+    void reversa() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Reversa: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+            if (!temp)
+                Pila.pop();
+
+            else {
+                if (Pila.top().second == 0) {
+                    Pila.top().second++;
+                    Pila.push({ temp->hijos[1],0 });
+                }
+
+                else {
+                    Pila.pop();
+                    cout << temp->x << " ";
+                    Pila.push({ temp->hijos[0],0 });
+                }
+            }
+        }
+        cout << endl;
+    }
+
+    void preorden() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Preorden: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+
+            if (!temp) {
+                Pila.pop();
+                Pila.top().second++;
+            }
+
+            else if (Pila.top().second == 0) {
+                cout << temp->x << " ";
+                Pila.top().second++;
+                Pila.push({ temp->hijos[0],0 });
+            }
+
+            else if (Pila.top().second == 2) {
+                Pila.top().second++;
+                Pila.push({ temp->hijos[1],0 });
+            }
+
+            else if (Pila.top().second == 3) {
+                Pila.pop();
+            }
+
+            else if (Pila.top().second == 4 && Pila.top().first == root) {
+                Pila.pop();
+            }
+
+            else if (Pila.top().second == 4) {
+                Pila.pop();
+                Pila.top().second++;
+            }
+        }
+        cout << endl;
+    }
+
+    void posorden() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Posorden: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+
+            if (!temp) {
+                Pila.pop();
+                Pila.top().second++;
+            }
+
+            else if (Pila.top().second == 0)
+                Pila.push({ temp->hijos[0],0 });
+
+            else if (Pila.top().second == 1)
+                Pila.push({ temp->hijos[1], 0 });
+
+            else if (Pila.top().second == 2 && Pila.top().first == root) {
+                cout << temp->x << " ";
+                Pila.pop();
+            }
+
+            else if (Pila.top().second == 2) {
+                cout << temp->x << " ";
+                Pila.pop();
+                Pila.top().second++;
+            }
+        }
+        cout << endl;
+    }
+
+    void print() {
+        inorden();
+        cout << endl;
+        preorden();
+        cout << endl;
+        posorden();
+        cout << endl;
+        reversa();
+        cout << endl;
+    }
+
+
+    Nodo<T>** Rep(Nodo<T>** NodoDelete) {
+        NodoDelete = &((*NodoDelete)->hijos[0]);
+
+        while ((*NodoDelete)->hijos[1] != NULL)
+            NodoDelete = &((*NodoDelete)->hijos[1]);
+
+        return NodoDelete;
+
+    }
+
+    void remove(T dato) {
+        Nodo<T>** Pos;
+        if (!Find(dato, Pos))
+            cout << "No puedes elimnar lo que no esta en el arbol" << endl;
+
+        else {
+            if ((*Pos)->hijos[0] != NULL && (*Pos)->hijos[1] != NULL) {
+                Nodo<T>** reemplazo;
+                reemplazo = Rep(Pos);
+
+                (*Pos)->x = (*reemplazo)->x;
+                Pos = reemplazo;
+            }
+
+            Nodo<T>* Temp = *Pos;
+            *Pos = (*Pos)->hijos[!((*Pos)->hijos[0] != NULL)];
+            delete Temp;
+
+        }
+    }
+
+    void removeall() {
+        while (root) {
+            T valor = root->x;
+            remove(valor);
+        }
+    }
+
+};
+
+int main() {
+    Arbol<int> prueba;
+    int opcion;
+    int dato, datoaeliminar;
+    do {
+        cout << "\t         MENU" << endl;
+        cout << "1. Insertar elemento en el arbol" << endl;
+        cout << "2. Eliminar un elemento del arbol" << endl;
+        cout << "3. Mostrar elementos en el arbol" << endl;
+        cout << "4. Eliminar todo el arbol" << endl;
+        cout << "5. Salir" << endl;
+        cout << "Opcion: ";
+        cin >> opcion;
+
+        switch (opcion) {
+        case 1: cout << "\nDigite un numero: ";
+            cin >> dato;
+            prueba.insert(dato);
+            system("pause");
+            break;
+        case 2: cout << "\nEscriba el dato a eliminar: ";
+            cin >> datoaeliminar;
+            prueba.remove(datoaeliminar);
+            system("pause");
+            break;
+        case 3: prueba.print();
+            system("pause");
+            break;
+        case 4: prueba.removeall();
+            system("pause");
+            break;
+        }
+        system("cls");
+
+    } while (opcion != 5);
+}

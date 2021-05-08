@@ -1,0 +1,638 @@
+#include <iostream>
+#include<stack>
+#include<vector>
+#include<queue>
+#include <stdlib.h>
+#include <windows.h>
+using namespace std;
+
+template<typename T>
+class Nodo{
+public:
+    Nodo<T>* hijos[2];
+    T val;
+    Nodo(T valor) {
+        hijos[0] = nullptr;
+        hijos[1] = nullptr;
+        val = valor;
+    }
+};
+
+
+template<typename T>
+class Arbol{
+
+public:
+
+    Nodo<T>* root;
+    int tempX;
+    Arbol() {
+        root = NULL;
+    }
+
+    ~Arbol() {
+		while (root) {
+			remove(root->val);
+		}
+	}
+
+  bool Find(T dato, Nodo<T>**& Pos, stack <Nodo<T>*>& Recorrido) {
+		for (Pos = &root; *Pos && (*Pos)->val != dato; Pos = &(*Pos)->hijos[dato > (*Pos)->val]){
+			Recorrido.push(*Pos);
+		}
+		return *Pos;
+	}
+
+  void insert(T dato) {
+		Nodo<T>** Pos;
+		stack <Nodo<T>*>Recorrido;
+		if (Find(dato, Pos, Recorrido))
+		{
+			cout << "No se acepta repeticiones" << endl;
+		}
+		else
+		{
+			(*Pos) = new Nodo<T>(dato);
+			Recorrido.push(*Pos);
+			vector < pair<Nodo<T>*, int>>Vector;
+			while (!Recorrido.empty())
+			{
+				Vector.push_back({ Recorrido.top(), FactorEquilibrio(Recorrido.top()) });
+				Recorrido.pop();
+			}
+			Nodo<T>* Mayor;
+			Nodo<T>* Medio;
+			Nodo<T>* Menor;
+
+			bool Seguir = true;
+
+			for (int i = 0; i < Vector.size() && Seguir; i++)
+			{
+				if (Vector[i].second == 2 || Vector[i].second == -2) {
+
+					int j = i - 1;
+					int k = i - 2;
+					Seguir = false;
+					if (Vector[i].first->val > Vector[j].first->val && Vector[i].first->val > Vector[j].first->val)
+					{
+						Mayor = Vector[i].first;
+
+						if (Vector[j].first->val > Vector[k].first->val)
+						{
+							Menor = Vector[k].first;
+							Medio = Vector[j].first;
+						}
+
+						else
+						{
+							Menor = Vector[j].first;
+							Medio = Vector[k].first;
+						}
+						Balancear(Mayor, Medio, Menor);
+					}
+
+					else if (Vector[j].first->val > Vector[i].first->val && Vector[j].first->val > Vector[k].first->val)
+					{
+						Mayor = Vector[j].first;
+
+						if (Vector[i].first->val > Vector[k].first->val)
+						{
+							Menor = Vector[k].first;
+							Medio = Vector[i].first;
+						}
+
+						else
+						{
+							Menor = Vector[i].first;
+							Medio = Vector[k].first;
+						}
+						Balancear(Mayor, Medio, Menor);
+					}
+
+					else if (Vector[k].first->val > Vector[i].first->val && Vector[k].first->val > Vector[j].first->val)
+					{
+						Mayor = Vector[k].first;
+
+						if (Vector[i].first->val > Vector[j].first->val)
+						{
+							Menor = Vector[j].first;
+							Medio = Vector[i].first;
+						}
+
+						else
+						{
+							Menor = Vector[i].first;
+							Medio = Vector[j].first;
+						}
+						Balancear(Mayor, Medio, Menor);
+					}
+				}
+			}
+		}
+	}
+
+
+  int FactorEquilibrio(Nodo<T>* Inicio) {
+		queue<Nodo<T>*>Cola;
+		int AlturaRight = 0;
+		if (Inicio->hijos[1] != NULL)
+		{
+			Cola.push(Inicio->hijos[1]);
+			while (!Cola.empty())
+			{
+				AlturaRight++;
+				queue<Nodo<T>*>Temp;
+				while (!Cola.empty())
+				{
+					if (Cola.front()->hijos[0] != NULL)
+						Temp.push(Cola.front()->hijos[0]);
+
+					if (Cola.front()->hijos[1] != NULL)
+						Temp.push(Cola.front()->hijos[1]);
+					Cola.pop();
+				}
+				while (!Temp.empty())
+				{
+					Cola.push(Temp.front());
+					Temp.pop();
+				}
+
+			}
+		}
+		int AlturaLeft = 0;
+		if (Inicio->hijos[0] != NULL)
+		{
+			Cola.push(Inicio->hijos[0]);
+			while (!Cola.empty())
+			{
+				AlturaLeft++;
+				queue<Nodo<T>*>Temp;
+				while (!Cola.empty())
+				{
+					if (Cola.front()->hijos[0] != NULL)
+						Temp.push(Cola.front()->hijos[0]);
+
+					if (Cola.front()->hijos[1] != NULL)
+						Temp.push(Cola.front()->hijos[1]);
+					Cola.pop();
+				}
+				while (!Temp.empty())
+				{
+					Cola.push(Temp.front());
+					Temp.pop();
+				}
+
+			}
+		}
+		return AlturaRight - AlturaLeft;
+	}
+
+Nodo<T>** Reep(Nodo<T>** NodoDelete) {
+        NodoDelete = &((*NodoDelete)->hijos[0]);
+
+        while ((*NodoDelete)->hijos[1] != NULL)
+            NodoDelete = &((*NodoDelete)->hijos[1]);
+
+        return NodoDelete;
+
+  }
+
+  void remove(T dato) {
+		Nodo<T>** Pos;
+		stack <Nodo<T>*>Recorrido;
+		if (!Find(dato, Pos, Recorrido))
+		{
+			cout << "No puedes elimnar lo que no esta en el Arbol" << endl;
+		}
+		else
+		{
+			if ((*Pos)->hijos[0] != NULL && (*Pos)->hijos[1] != NULL)
+			{
+				Nodo<T>** reemplazo;
+				reemplazo = Reep(Pos);
+				(*Pos)->val = (*reemplazo)->val;
+				Pos = reemplazo;
+			}
+			Nodo<T>* Temp = *Pos;
+			*Pos = (*Pos)->hijos[!((*Pos)->hijos[0] != NULL)];
+			delete Temp;
+			queue<Nodo<T>*>Cola;
+			Cola.push(root);
+			bool Seguir = true;
+			while (!Cola.empty() && Seguir)
+			{
+				queue<Nodo<T>*>Temp;
+				while (!Cola.empty() && Seguir)
+				{
+					if (FactorEquilibrio(Cola.front()) == -2 || FactorEquilibrio(Cola.front()) == 2)
+					{
+						Seguir = false;
+						Nodo<T>* Temp = Cola.front();
+						Nodo<T>* Mayor;
+						Nodo<T>* Medio;
+						Nodo<T>* Menor;
+						if (Temp->hijos[1] && Temp->hijos[1]->hijos[1])
+						{
+							Menor = Temp;
+							Medio = Temp->hijos[1];
+							Mayor = Temp->hijos[1]->hijos[1];
+							Balancear(Mayor, Medio, Menor);
+						}
+						else if (Temp->hijos[0] && Temp->hijos[0]->hijos[0])
+						{
+							Mayor = Temp;
+							Medio = Temp->hijos[0];
+							Menor = Temp->hijos[0]->hijos[0];
+							Balancear(Mayor, Medio, Menor);
+						}
+
+
+						else if (Temp->hijos[1] && Temp->hijos[1]->hijos[0])
+						{
+							Mayor = Temp->hijos[1];
+							Menor = Temp;
+							Medio = Temp->hijos[1]->hijos[0];
+							Balancear(Mayor, Medio, Menor);
+						}
+
+						else if (Temp->hijos[0] && Temp->hijos[0]->hijos[1])
+						{
+							Mayor = Temp;
+							Menor = Temp->hijos[0];
+							Medio = Temp->hijos[0]->hijos[1];
+							cout << Mayor->val << "-" << Medio->val << "-" << Menor->val << endl;
+							Balancear(Mayor, Medio, Menor);
+						}
+					}
+					if (Cola.front()->hijos[0] != NULL)
+						Temp.push(Cola.front()->hijos[0]);
+
+					if (Cola.front()->hijos[1] != NULL)
+						Temp.push(Cola.front()->hijos[1]);
+					Cola.pop();
+				}
+				while (!Temp.empty())
+				{
+					Cola.push(Temp.front());
+					Temp.pop();
+				}
+			}
+		}
+	}
+
+  void Balancear(Nodo<T>*& Mayor, Nodo<T>*& Medio, Nodo<T>*& Menor) {
+		stack <Nodo<T>*> Temp;
+		Nodo<T>** Pos = NULL;
+		if (Menor->hijos[1] == Medio && Medio->hijos[1] == Mayor)
+		{
+			Find(Menor->val, Pos, Temp);
+			*Pos = Medio;
+			Nodo<T>* MedioLeft = Medio->hijos[0];
+			Medio->hijos[0] = Menor;
+			Menor->hijos[1] = MedioLeft;
+		}
+		else if (Mayor->hijos[0] && Medio->hijos[0] == Menor)
+		{
+			Find(Mayor->val, Pos, Temp);
+			*Pos = Medio;
+			Nodo<T>* MedioRight = Medio->hijos[1];
+			Medio->hijos[1] = Mayor;
+			Mayor->hijos[0] = MedioRight;
+		}
+		else if (Menor->hijos[1] == Mayor && Mayor->hijos[0] == Medio)
+		{
+			Find(Menor->val, Pos, Temp);
+			*Pos = Medio;
+			Nodo<T>* MedioLeft = Medio->hijos[0];
+			Nodo<T>* MedioRight = Medio->hijos[1];
+			Medio->hijos[1] = Mayor;
+			Medio->hijos[0] = Menor;
+			Menor->hijos[1] = MedioRight;
+			Mayor->hijos[0] = MedioLeft;
+		}
+		else
+		{
+			Find(Mayor->val, Pos, Temp);
+			*Pos = Medio;
+			Nodo<T>* MedioLeft = Medio->hijos[0];
+			Nodo<T>* MedioRight = Medio->hijos[1];
+			Medio->hijos[1] = Mayor;
+			Medio->hijos[0] = Menor;
+			Mayor->hijos[0] = MedioLeft;
+			Menor->hijos[1] = MedioRight;
+		}
+
+	}
+
+  int Altura() {
+		if (root == NULL)
+			cout << "No hay altura por que no hay nodos" << endl;
+		else
+		{
+			queue<Nodo<T>*>Cola;
+			int AlturaRight = 0;
+			if (root->hijos[1] != NULL)
+			{
+				Cola.push(root->hijos[1]);
+				while (!Cola.empty())
+				{
+					AlturaRight++;
+					queue<Nodo<T>*>Temp;
+					while (!Cola.empty())
+					{
+						if (Cola.front()->hijos[0] != NULL)
+							Temp.push(Cola.front()->hijos[0]);
+
+						if (Cola.front()->hijos[1] != NULL)
+							Temp.push(Cola.front()->hijos[1]);
+						Cola.pop();
+					}
+					while (!Temp.empty())
+					{
+						Cola.push(Temp.front());
+						Temp.pop();
+					}
+
+				}
+			}
+			int AlturaLeft = 0;
+			if (root->hijos[0] != NULL)
+			{
+				Cola.push(root->hijos[0]);
+				while (!Cola.empty())
+				{
+					AlturaLeft++;
+					queue<Nodo<T>*>Temp;
+					while (!Cola.empty())
+					{
+						if (Cola.front()->hijos[0] != NULL)
+							Temp.push(Cola.front()->hijos[0]);
+
+						if (Cola.front()->hijos[1] != NULL)
+							Temp.push(Cola.front()->hijos[1]);
+						Cola.pop();
+					}
+					while (!Temp.empty())
+					{
+						Cola.push(Temp.front());
+						Temp.pop();
+					}
+				}
+			}
+			if (AlturaRight > AlturaLeft)
+				return AlturaRight + 1;
+			return AlturaLeft + 1;
+		}
+	}
+
+
+  void gotoxy(int x, int y) {
+		HANDLE hcon;
+		hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+		COORD dwPos;
+		dwPos.X = x;
+		dwPos.Y = y;
+		SetConsoleCursorPosition(hcon, dwPos);
+	}
+
+
+
+  void inorden() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Inorden: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+            if (!temp)
+                Pila.pop();
+
+            else {
+                if (Pila.top().second == 0) {
+                    Pila.top().second++;
+                    Pila.push({ temp->hijos[0],0 });
+                }
+
+                else {
+                    Pila.pop();
+                    cout << temp->val << " ";
+                    Pila.push({ temp->hijos[1],0 });
+                }
+            }
+        }
+        cout << endl;
+  }
+
+
+    void reversa() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Reversa: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+            if (!temp)
+                Pila.pop();
+
+            else {
+                if (Pila.top().second == 0) {
+                    Pila.top().second++;
+                    Pila.push({ temp->hijos[1],0 });
+                }
+
+                else {
+                    Pila.pop();
+                    cout << temp->val << " ";
+                    Pila.push({ temp->hijos[0],0 });
+                }
+            }
+        }
+        cout << endl;
+    }
+
+    void preorden() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Preorden: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+
+            if (!temp) {
+                Pila.pop();
+                Pila.top().second++;
+            }
+
+            else if (Pila.top().second == 0) {
+                cout << temp->val << " ";
+                Pila.top().second++;
+                Pila.push({ temp->hijos[0],0 });
+            }
+
+            else if (Pila.top().second == 2) {
+                Pila.top().second++;
+                Pila.push({ temp->hijos[1],0 });
+            }
+
+            else if (Pila.top().second == 3) {
+                Pila.pop();
+            }
+
+            else if (Pila.top().second == 4 && Pila.top().first == root) {
+                Pila.pop();
+            }
+
+            else if (Pila.top().second == 4) {
+                Pila.pop();
+                Pila.top().second++;
+            }
+        }
+        cout << endl;
+    }
+
+    void posorden() {
+        stack < pair<Nodo<T>*, int>>Pila;
+        Pila.push({ root,0 });
+
+        Nodo<T>* temp = NULL;
+        cout << "Posorden: ";
+        while (!Pila.empty()) {
+            temp = Pila.top().first;
+
+            if (!temp) {
+                Pila.pop();
+                Pila.top().second++;
+            }
+
+            else if (Pila.top().second == 0)
+                Pila.push({ temp->hijos[0],0 });
+
+            else if (Pila.top().second == 1)
+                Pila.push({ temp->hijos[1], 0 });
+
+            else if (Pila.top().second == 2 && Pila.top().first == root) {
+                cout << temp->val << " ";
+                Pila.pop();
+            }
+
+            else if (Pila.top().second == 2) {
+                cout << temp->val << " ";
+                Pila.pop();
+                Pila.top().second++;
+            }
+        }
+        cout << endl;
+    }
+
+
+	void niveles(Nodo<T>* P, int n = 0) {
+		if (P == NULL)
+			return;
+		niveles(P->hijos[1], n + 1);
+
+		for (int i = 0; i < n; i++)
+			cout << "   ";
+
+		cout << P->val << endl;
+
+		niveles(P->hijos[0], n + 1);
+	}
+
+
+	void nivelespila() {
+		queue<Nodo<T>*>Cola;
+
+		if (root == NULL)
+			cout << "Arbol vacio" << endl;
+
+		else {
+			Cola.push(root);
+
+			while (!Cola.empty()) {
+				queue<Nodo<T>*>Temp;
+				while (!Cola.empty()) {
+					cout << "   " << Cola.front()->val << "   ";
+
+					if (Cola.front()->hijos[0] != NULL)
+						Temp.push(Cola.front()->hijos[0]);
+
+					if (Cola.front()->hijos[1] != NULL)
+						Temp.push(Cola.front()->hijos[1]);
+					Cola.pop();
+				}
+				cout << endl;
+				while (!Temp.empty()) {
+					Cola.push(Temp.front());
+					Temp.pop();
+				}
+			}
+			cout << endl;
+		}
+	}
+
+    void removeall() {
+        while (root) {
+            remove(root->val);
+        }
+    }
+
+  void print() {
+		inorden();
+		cout << endl;
+		preorden();
+		cout << endl;
+		posorden();
+		cout << endl;
+		reversa();
+		cout << endl;
+		cout << "Contenido por niveles recursivo(raiz a la izquierda y crece hacia la derecha):" << endl;
+		niveles(root, 0);
+		cout << endl;
+		cout << "Contenido por niveles con stack:" << endl;
+		nivelespila();
+		cout << endl;
+
+	}
+
+};
+
+int main() {
+    Arbol<int> prueba;
+    int opcion;
+    int dato, datoaeliminar;
+    do {
+        cout << "\t         MENU" << endl;
+
+        cout << "1. Insertar elemento en el arbol" << endl;
+        cout << "2. Eliminar un elemento del arbol" << endl;
+        cout << "3. Mostrar elementos en el arbol" << endl;
+        cout << "4. Eliminar todo el arbol" << endl;
+        cout << "5. Salir" << endl;
+        cout << "Opcion: ";
+        cin >> opcion;
+
+        switch (opcion) {
+        case 1: cout << "\nDigite un numero: ";
+            cin >> dato;
+            prueba.insert(dato);
+            system("pause");
+            break;
+        case 2: cout << "\nEscriba el dato a eliminar: ";
+            cin >> datoaeliminar;
+            prueba.remove(datoaeliminar);
+            system("pause");
+            break;
+        case 3: prueba.print();
+            system("pause");
+            break;
+        case 4: prueba.removeall();
+            system("pause");
+            break;
+        }
+        system("cls");
+
+    } while (opcion != 5);
+}

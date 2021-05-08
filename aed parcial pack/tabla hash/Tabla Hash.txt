@@ -1,0 +1,148 @@
+#include <iostream>
+#include<vector>
+#include<list>
+using namespace std;
+
+
+template<class T>
+class CLisAdapter
+{
+public:
+	list<T> Lista;
+	void ins(T x) {
+		Lista.push_back(x);
+	}
+
+	bool find(T x) {
+		typename list<T> ::iterator i;
+		for ( i = Lista.begin(); i != Lista.end(); i++)
+			if (x==*i)
+				return true;
+
+		return false;
+	}
+
+	void rem(T x) {
+		Lista.remove(x);
+	}
+
+	void Print() {
+		for (typename list<T> ::iterator i = Lista.begin(); i != Lista.end(); i++)
+			cout << *i<<"-";
+		cout << endl;
+	}
+
+};
+
+
+class Dispersion
+{
+public:
+	int operator ()(int a, long lentabla) {
+		return a % lentabla;
+	}
+	
+};
+
+
+template<class T,class E,class F,long Z>
+class CHasTable
+{
+public:
+	F FuncionDispersion;
+	vector<E> tabla;
+
+	CHasTable() {
+		tabla.resize(Z);
+	}
+
+	void Insert(T x) {
+		int i = FuncionDispersion(x,Z);
+		tabla[i].ins(x);
+	}
+
+	bool Find(T x) {
+		int i = FuncionDispersion(x,Z);
+		return tabla[i].find(x);
+	}
+
+	void Erase(T x) {
+		int i = FuncionDispersion(x,Z);
+		tabla[i].rem(x);
+	}
+
+	
+
+	void Print() {
+		
+		for (int i = 0; i < Z; i++) {
+			cout << i <<": ";
+			tabla[i].Print();
+		}
+		cout << endl;
+			
+	}
+};
+
+
+
+CHasTable<int, CLisAdapter<int>, Dispersion, 7> TablaHash;
+void Menu() {
+
+	cout << "Ingrese una opcion" << endl;
+	cout << "1. Insertar en la TablaHash" << endl;
+	cout << "2. Eliminar en la TablaHash" << endl;
+	cout << "3. Mostrar en la TablaHash" << endl;
+
+
+	cout << "Opcion: ";
+	int opcion;
+	cin >> opcion;
+
+	int dato;
+
+	switch (opcion) {
+
+	case 1:
+
+		cout << endl << "Ingrese el simbolo del nodo: ";
+		cin >> dato;
+		TablaHash.Insert(dato);
+		cout << endl;
+		system("pause");
+		system("cls");
+		return Menu();
+		break;
+
+	case 2:
+		cout << endl << "Ingrese el simbolo: ";
+		cin >> dato;
+		TablaHash.Erase(dato);
+		system("pause");
+		system("cls");
+		return Menu();
+		break;
+
+
+	case 3:
+		TablaHash.Print();
+		cout << endl;
+		system("pause");
+		system("cls");
+		return Menu();
+		break;
+
+
+
+	default:
+
+		break;
+	}
+
+
+}
+
+int main()
+{
+	Menu();
+}

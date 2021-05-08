@@ -1,0 +1,265 @@
+#include<algorithm>
+#include<iostream>
+#include<stack>
+#include<vector>
+#include<queue>
+#include <windows.h>
+using namespace std;
+template <typename T>
+class Nodo {
+public:
+    T val;
+    int altura;
+    Nodo<T>* hijos[2];
+    Nodo(T k) {
+        altura = 1;
+        val = k;
+        hijos[0] = nullptr;
+        hijos[1] = nullptr;
+    }
+};
+template <typename T>
+class Arbol {
+public:
+
+    Nodo<T>* root = NULL;
+    int n, aunX;
+    void insert(T x) {
+        root = finsertar(root, x);
+    }
+    void remove(T x) {
+        root = feliminar(root, x);
+    }
+    void removeall() {
+        while (root) {
+            T val = root->val;
+            remove(val);
+        }
+    }
+    ~Arbol() {
+        while (root) {
+            T val = root->val;
+            remove(val);
+        }
+    }
+    Nodo<T>* search(T x) {
+        return fbuscar(root, x);
+    }
+
+   void print() {
+    cout<<"Inorden:"<<endl;
+		inorden(root);
+		cout << endl;
+    cout<<"Posorden:"<<endl;
+		preorden(root);
+		cout << endl;
+    cout<<"Preorden:"<<endl;
+		posorden(root);
+		cout << endl;
+    cout<<"Reversa:"<<endl;
+		reversa(root);
+		cout << endl;
+		cout << "Contenido por niveles recursivo(raiz a la izquierda y crece hacia la derecha):" << endl;
+		niveles(root, 0);
+		cout << endl<< endl;
+	}
+
+private:
+
+    int auxX = 0;
+    int altura(Nodo<T>* head) {
+        if (head == NULL) return 0;
+        return head->altura;
+    }
+    Nodo<T>* RotacionDerecha(Nodo<T>* head) {
+        Nodo<T>* newhead = head->hijos[0];
+        head->hijos[0] = newhead->hijos[1];
+        newhead->hijos[1] = head;
+        head->altura = 1 + max(altura(head->hijos[0]), altura(head->hijos[1]));
+        newhead->altura = 1 + max(altura(newhead->hijos[0]), altura(newhead->hijos[1]));
+        return newhead;
+    }
+
+    Nodo<T>* RotacionIzquierda(Nodo<T>* head) {
+        Nodo<T>* newhead = head->hijos[1];
+        head->hijos[1] = newhead->hijos[0];
+        newhead->hijos[0] = head;
+        head->altura = 1 + max(altura(head->hijos[0]), altura(head->hijos[1]));
+        newhead->altura = 1 + max(altura(newhead->hijos[0]), altura(newhead->hijos[1]));
+        return newhead;
+    }
+
+    void inorden(Nodo<T>* head) {
+        if (!head) return;
+        inorden(head->hijos[0]);
+        cout << head->val << " - ";
+        inorden(head->hijos[1]);
+    }
+    void posorden(Nodo<T>* head) {
+        if (!head) return;
+        posorden(head->hijos[0]);
+        posorden(head->hijos[1]);
+        cout << head->val << " - ";
+    }
+    void preorden(Nodo<T>* head) {
+        if (!head) return;
+        cout << head->val << " - ";
+        preorden(head->hijos[0]);
+        preorden(head->hijos[1]);
+    }
+    void reversa(Nodo<T>* head) {
+        if (!head) return;
+        reversa(head->hijos[1]);
+        cout << head->val << " - ";
+        reversa(head->hijos[0]);
+    }
+
+    void niveles(Nodo<T>* P, int n = 0) {
+		if (P == NULL)
+			return;
+		niveles(P->hijos[1], n + 1);
+
+		for (int i = 0; i < n; i++)
+			cout << "   ";
+
+		cout << P->val << endl;
+
+		niveles(P->hijos[0], n + 1);
+	}
+
+    void gotoxy(int x, int y) {
+        HANDLE hcon;
+        hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+        COORD dwPos;
+        dwPos.X = x;
+        dwPos.Y = y;
+        SetConsoleCursorPosition(hcon, dwPos);
+    }
+
+    Nodo<T>* finsertar(Nodo<T>* head, T x) {
+        if (head == NULL) {
+            n += 1;
+            Nodo<T>* temp = new Nodo<T>(x);
+            return temp;
+        }
+        head->hijos[x > head->val] = finsertar(head->hijos[x > head->val], x);
+        head->altura = 1 + max(altura(head->hijos[0]), altura(head->hijos[1]));
+        int bal = altura(head->hijos[0]) - altura(head->hijos[1]);
+        if (bal > 1) {
+            if (x < head->hijos[0]->val) {
+                return RotacionDerecha(head);
+            }
+            else {
+                head->hijos[0] = RotacionIzquierda(head->hijos[0]);
+                return RotacionDerecha(head);
+            }
+        }
+        else if (bal < -1) {
+            if (x > head->hijos[1]->val) {
+                return RotacionIzquierda(head);
+            }
+            else {
+                head->hijos[1] = RotacionDerecha(head->hijos[1]);
+                return RotacionIzquierda(head);
+            }
+        }
+        return head;
+    }
+
+
+    Nodo<T>* feliminar(Nodo<T>* head, T x) {
+        if (head == NULL) return NULL;
+        if (x < head->val) {
+            head->hijos[0] = feliminar(head->hijos[0], x);
+        }
+        else if (x > head->val) {
+            head->hijos[1] = feliminar(head->hijos[1], x);
+        }
+        else {
+            Nodo<T>* r = head->hijos[1];
+            if (head->hijos[1] == NULL) {
+                Nodo<T>* l = head->hijos[0];
+                delete(head);
+                head = l;
+            }
+            else if (head->hijos[0] == NULL) {
+                delete(head);
+                head = r;
+            }
+            else {
+                while (r->hijos[0] != NULL) r = r->hijos[0];
+                head->val = r->val;
+                head->hijos[1] = feliminar(head->hijos[1], r->val);
+            }
+        }
+        if (head == NULL) return head;
+        head->altura = 1 + max(altura(head->hijos[0]), altura(head->hijos[1]));
+        int bal = altura(head->hijos[0]) - altura(head->hijos[1]);
+        if (bal > 1) {
+            if (x > head->hijos[0]->val) {
+                return RotacionDerecha(head);
+            }
+            else {
+                head->hijos[0] = RotacionIzquierda(head->hijos[0]);
+                return RotacionDerecha(head);
+            }
+        }
+        else if (bal < -1) {
+            if (x < head->hijos[1]->val) {
+                return RotacionIzquierda(head);
+            }
+            else {
+                head->hijos[1] = RotacionDerecha(head->hijos[1]);
+                return RotacionIzquierda(head);
+            }
+        }
+        return head;
+    }
+
+
+    Nodo<T>* fbuscar(Nodo<T>* head, T x) {
+        if (head == NULL) return NULL;
+        T k = head->val;
+        if (k == x) return head;
+        if (k > x) return fbuscar(head->hijos[0], x);
+        if (k < x) return fbuscar(head->hijos[1], x);
+    }
+};
+
+
+int main() {
+	Arbol<int> prueba;
+	int opcion;
+	int dato, datoaeliminar;
+	do {
+		cout << "\t         MENU" << endl;
+		cout << "1. Insertar elemento en el arbol" << endl;
+		cout << "2. Eliminar un elemento del arbol" << endl;
+		cout << "3. Mostrar elementos en el arbol" << endl;
+		cout << "4. Eliminar todo el arbol" << endl;
+		cout << "5. Salir" << endl;
+		cout << "Opcion: ";
+		cin >> opcion;
+
+		switch (opcion) {
+		case 1: cout << "\nDigite un numero: ";
+			cin >> dato;
+			prueba.insert(dato);
+			system("pause");
+			break;
+		case 2: cout << "\nEscriba el dato a eliminar: ";
+			cin >> datoaeliminar;
+			prueba.remove(datoaeliminar);
+			system("pause");
+			break;
+		case 3: prueba.print();
+			system("pause");
+			break;
+		case 4: prueba.removeall();
+			system("pause");
+			break;
+		}
+		system("cls");
+
+	} while (opcion != 5);
+}

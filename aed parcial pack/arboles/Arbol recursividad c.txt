@@ -1,0 +1,174 @@
+#include <iostream>
+using namespace std;
+
+
+template<typename T>
+class Nodo
+{
+public:
+	Nodo<T>* hijos[2];
+	T x;
+	Nodo(T valor) {
+		hijos[0] = nullptr;
+		hijos[1] = nullptr;
+		x = valor;
+	}
+};
+
+
+template<typename T>
+class Arbol
+{
+public:
+	Nodo<T>* root;
+
+	Arbol() {
+		root = NULL;
+	}
+
+	~Arbol() {
+		Nodo<T>* temp;
+		for (temp = root; temp != nullptr; temp = root) {
+			remove(temp->x);
+		}
+	}
+
+	bool Find(T dato, Nodo<T>**& Pos) {
+		for (Pos = &root; *Pos && (*Pos)->x != dato; Pos = &(*Pos)->hijos[dato > (*Pos)->x]);
+		return *Pos;
+	}
+
+
+	void insert(T dato) {
+		Nodo<T>** Pos;
+		if (Find(dato, Pos))
+			cout << "No se acepta repeticiones" << endl;
+		else
+			(*Pos) = new Nodo<T>(dato);
+	}
+
+
+	void inorden(Nodo<T>* P) {
+		if (!P)
+			return;
+		inorden(P->hijos[0]);
+		cout << P->x << " ";
+		inorden(P->hijos[1]);
+	}
+
+	void reversa(Nodo<T>* P) {
+		if (!P)
+			return;
+		reversa(P->hijos[1]);
+		cout << P->x << " ";
+		reversa(P->hijos[0]);
+	}
+
+	void preorden(Nodo<T>* P) {
+		if (!P)
+			return;
+		cout << P->x << " ";
+		preorden(P->hijos[0]);
+		preorden(P->hijos[1]);
+	}
+
+	void posorden(Nodo<T>* P) {
+		if (!P)
+			return;
+		posorden(P->hijos[0]);
+		posorden(P->hijos[1]);
+		cout << P->x << " ";
+	}
+
+	void print() {
+		cout << "Inorden recursivo C" << endl;
+		inorden(root);
+		cout << endl;
+		cout << "Preorden recursivo C" << endl;
+		preorden(root);
+		cout << endl;
+		cout << "Posorden recursivo C" << endl;
+		posorden(root);
+		cout << endl;
+		cout << "Reversa recursivo C" << endl;
+		reversa(root);
+		cout << endl;
+	}
+
+
+	Nodo<T>** Rep(Nodo<T>** NodoDelete) {
+		NodoDelete = &((*NodoDelete)->hijos[0]);
+
+		while ((*NodoDelete)->hijos[1] != NULL)
+			NodoDelete = &((*NodoDelete)->hijos[1]);
+
+		return NodoDelete;
+
+	}
+
+	void remove(T dato) {
+		Nodo<T>** Pos;
+		if (!Find(dato, Pos))
+			cout << "No puedes elimnar lo que no esta en el arbol" << endl;
+
+		else {
+			if ((*Pos)->hijos[0] != NULL && (*Pos)->hijos[1] != NULL) {
+				Nodo<T>** reemplazo;
+				reemplazo = Rep(Pos);
+
+				(*Pos)->x = (*reemplazo)->x;
+				Pos = reemplazo;
+			}
+
+			Nodo<T>* Temp = *Pos;
+			*Pos = (*Pos)->hijos[!((*Pos)->hijos[0] != NULL)];
+			delete Temp;
+
+		}
+	}
+
+	void removeall() {
+		while (root) {
+			T valor = root->x;
+			remove(valor);
+		}
+	}
+
+};
+
+int main() {
+	Arbol<int> prueba;
+	int opcion;
+	int dato, datoaeliminar;
+	do {
+		cout << "\t         MENU" << endl;
+		cout << "1. Insertar elemento en el arbol" << endl;
+		cout << "2. Eliminar un elemento del arbol" << endl;
+		cout << "3. Mostrar elementos en el arbol" << endl;
+		cout << "4. Eliminar todo el arbol" << endl;
+		cout << "5. Salir" << endl;
+		cout << "Opcion: ";
+		cin >> opcion;
+
+		switch (opcion) {
+		case 1: cout << "\nDigite un numero: ";
+			cin >> dato;
+			prueba.insert(dato);
+			system("pause");
+			break;
+		case 2: cout << "\nEscriba el dato a eliminar: ";
+			cin >> datoaeliminar;
+			prueba.remove(datoaeliminar);
+			system("pause");
+			break;
+		case 3: prueba.print();
+			system("pause");
+			break;
+		case 4: prueba.removeall();
+			system("pause");
+			break;
+		}
+		system("cls");
+
+	} while (opcion != 5);
+}
