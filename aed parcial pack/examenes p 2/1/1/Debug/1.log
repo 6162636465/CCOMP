@@ -1,0 +1,4 @@
+﻿  1.cpp
+C:\Users\Usuario\Desktop\aed parcial pack\examenes p 2\1\1\1.cpp(76): warning C4715: 'pila<int>::pop': no todas las rutas de acceso de control devuelven un valor
+C:\Users\Usuario\Desktop\aed parcial pack\examenes p 2\1\1\1.cpp(76): warning C4715: 'pila<char>::pop': no todas las rutas de acceso de control devuelven un valor
+  1.vcxproj -> C:\Users\Usuario\Desktop\aed parcial pack\examenes p 2\1\Debug\1.exe
