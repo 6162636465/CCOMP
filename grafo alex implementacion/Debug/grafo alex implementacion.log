@@ -1,0 +1,6 @@
+﻿  grafo alex implementacion.cpp
+E:\algoritmo y estructura de datos\grafo alex implementacion\grafo alex implementacion\grafo alex implementacion.cpp(99,20): warning C4018: '<': no coinciden signed/unsigned
+E:\algoritmo y estructura de datos\grafo alex implementacion\grafo alex implementacion\grafo alex implementacion.cpp(98): message : al compilar la función del miembro clase plantilla "void CGraf<int,int>::printGraph(void)"
+E:\algoritmo y estructura de datos\grafo alex implementacion\grafo alex implementacion\grafo alex implementacion.cpp(243): message : Vea la referencia a la creación de una instancia de la función plantilla "void CGraf<int,int>::printGraph(void)" que se está compilando
+E:\algoritmo y estructura de datos\grafo alex implementacion\grafo alex implementacion\grafo alex implementacion.cpp(224): message : Vea la referencia a la creación de una instancia de clase plantilla "CGraf<int,int>" que se está compilando
+  grafo alex implementacion.vcxproj -> E:\algoritmo y estructura de datos\grafo alex implementacion\Debug\grafo alex implementacion.exe
