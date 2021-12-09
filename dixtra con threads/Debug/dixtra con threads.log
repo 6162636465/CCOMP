@@ -1,0 +1,12 @@
+﻿  dixtra con threads.cpp
+E:\algoritmo y estructura de datos\dixtra con threads\dixtra con threads.cpp(250,14): warning C4018: '<': no coinciden signed/unsigned
+E:\algoritmo y estructura de datos\dixtra con threads\dixtra con threads.cpp(299,14): warning C4018: '<': no coinciden signed/unsigned
+E:\algoritmo y estructura de datos\dixtra con threads\dixtra con threads.cpp(323,27): warning C4018: '<': no coinciden signed/unsigned
+E:\algoritmo y estructura de datos\dixtra con threads\dixtra con threads.cpp(350,32): warning C4018: '>': no coinciden signed/unsigned
+E:\algoritmo y estructura de datos\dixtra con threads\dixtra con threads.cpp(375,17): warning C4018: '<': no coinciden signed/unsigned
+E:\algoritmo y estructura de datos\dixtra con threads\dixtra con threads.cpp(282): message : Vea la referencia a la creación de una instancia de la función plantilla "int Localizar<CNode<CGraph<char,int>>*>(T,std::deque<CNode<CGraph<char,int>> *,std::allocator<CNode<CGraph<char,int>> *>>)" que se está compilando
+          with
+          [
+              T=CNode<CGraph<char,int>> *
+          ]
+  dixtra con threads.vcxproj -> E:\algoritmo y estructura de datos\dixtra con threads\Debug\dixtra con threads.exe
